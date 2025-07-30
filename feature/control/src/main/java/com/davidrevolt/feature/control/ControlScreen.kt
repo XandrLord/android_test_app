@@ -425,7 +425,7 @@ fun CharacteristicItem(
                         .padding(vertical = 8.dp)
                 ) {
                     Text("Speed: ${values[0]}", style = MaterialTheme.typography.bodySmall)
-                    Text("Brightness: ${values[1]}", style = MaterialTheme.typography.bodySmall)
+                    Text("White: ${values[1]}", style = MaterialTheme.typography.bodySmall)
                     Text("Red: ${values[2]}", style = MaterialTheme.typography.bodySmall)
                     Text("Green: ${values[3]}", style = MaterialTheme.typography.bodySmall)
                     Text("Blue: ${values[4]}", style = MaterialTheme.typography.bodySmall)
@@ -443,7 +443,7 @@ fun CharacteristicItem(
                 OutlinedTextField(
                     value = speedValue,
                     onValueChange = { speedValue = it.filter { char -> char.isDigit() } },
-                    label = { Text("Speed (0-100)") },
+                    label = { Text("Speed (0-2)") },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -452,7 +452,7 @@ fun CharacteristicItem(
                 OutlinedTextField(
                     value = brightnessValue,
                     onValueChange = { brightnessValue = it.filter { char -> char.isDigit() } },
-                    label = { Text("Brightness (0-100)") },
+                    label = { Text("White (0-100)") },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)

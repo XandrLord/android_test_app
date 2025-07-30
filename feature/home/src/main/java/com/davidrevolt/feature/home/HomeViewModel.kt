@@ -31,7 +31,7 @@ class HomeViewModel @Inject constructor(
         bluetoothLeService.getScanResults()
     ) { isScanning, scanResults ->
         // Фильтровать результаты по имени устройства
-        val allowedNames = listOf("1T_Home_Copter")
+        val allowedNames = listOf("1T_Dome_Copter")
         val filteredResults = scanResults.filter { result ->
             result.name != null && allowedNames.contains(result.name)
         }
