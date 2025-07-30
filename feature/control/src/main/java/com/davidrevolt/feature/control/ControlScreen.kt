@@ -388,22 +388,32 @@ fun CharacteristicItem(
 ) {
     // Отдельные состояния для каждого значения
     var speedValue by remember { mutableStateOf("") }
-    var brightnessValue by remember { mutableStateOf("") }
-    var redValue by remember { mutableStateOf("") }
-    var greenValue by remember { mutableStateOf("") }
-    var blueValue by remember { mutableStateOf("") }
+    var white1Value by remember { mutableStateOf("") }
+    var white2Value by remember { mutableStateOf("") }
+    var red1Value by remember { mutableStateOf("") }
+    var green1Value by remember { mutableStateOf("") }
+    var blue1Value by remember { mutableStateOf("") }
+    var red2Value by remember { mutableStateOf("") }
+    var green2Value by remember { mutableStateOf("") }
+    var blue2Value by remember { mutableStateOf("") }
+    var regimeValue by remember { mutableStateOf("") }
 
     // Функция для парсинга данных при чтении
     LaunchedEffect(characteristic.readBytes) {
         characteristic.readBytes?.let {
             val dataValue = it.toString(Charsets.UTF_8)
             val values = dataValue.split(",")
-            if (values.size >= 5) {
+            if (values.size >= 10) {
                 speedValue = values[0]
-                brightnessValue = values[1]
-                redValue = values[2]
-                greenValue = values[3]
-                blueValue = values[4]
+                white1Value = values[1]
+                white2Value = values[2]
+                red1Value = values[3]
+                green1Value = values[4]
+                blue1Value = values[5]
+                red2Value = values[6]
+                green2Value = values[7]
+                blue2Value = values[8]
+                regimeValue = values[9]
             }
         }
     }
@@ -418,17 +428,23 @@ fun CharacteristicItem(
             val dataValue = it.toString(Charsets.UTF_8)
             val values = dataValue.split(",")
 
-            if (values.size >= 5) {
+            if (values.size >= 10) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                 ) {
+                    Text("Текущие значения:", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
                     Text("Speed: ${values[0]}", style = MaterialTheme.typography.bodySmall)
-                    Text("White: ${values[1]}", style = MaterialTheme.typography.bodySmall)
-                    Text("Red: ${values[2]}", style = MaterialTheme.typography.bodySmall)
-                    Text("Green: ${values[3]}", style = MaterialTheme.typography.bodySmall)
-                    Text("Blue: ${values[4]}", style = MaterialTheme.typography.bodySmall)
+                    Text("White1: ${values[1]}", style = MaterialTheme.typography.bodySmall)
+                    Text("White2: ${values[2]}", style = MaterialTheme.typography.bodySmall)
+                    Text("Red1: ${values[3]}", style = MaterialTheme.typography.bodySmall)
+                    Text("Green1: ${values[4]}", style = MaterialTheme.typography.bodySmall)
+                    Text("Blue1: ${values[5]}", style = MaterialTheme.typography.bodySmall)
+                    Text("Red2: ${values[6]}", style = MaterialTheme.typography.bodySmall)
+                    Text("Green2: ${values[7]}", style = MaterialTheme.typography.bodySmall)
+                    Text("Blue2: ${values[8]}", style = MaterialTheme.typography.bodySmall)
+                    Text("Regime: ${values[9]}", style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
@@ -440,46 +456,150 @@ fun CharacteristicItem(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
             ) {
+                Text("Вентиляторы", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
+                // Speed
                 OutlinedTextField(
                     value = speedValue,
-                    onValueChange = { speedValue = it.filter { char -> char.isDigit() } },
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 2 } == true) {
+                            speedValue = filtered
+                        }
+                    },
                     label = { Text("Speed (0-2)") },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
+                // White каналы
+                Text("Белые каналы", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
+
                 OutlinedTextField(
-                    value = brightnessValue,
-                    onValueChange = { brightnessValue = it.filter { char -> char.isDigit() } },
-                    label = { Text("White (0-100)") },
+                    value = white1Value,
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 100 } == true) {
+                            white1Value = filtered
+                        }
+                    },
+                    label = { Text("White1 (0-100)") },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 OutlinedTextField(
-                    value = redValue,
-                    onValueChange = { redValue = it.filter { char -> char.isDigit() } },
-                    label = { Text("Red (0-255)") },
+                    value = white2Value,
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 100 } == true) {
+                            white2Value = filtered
+                        }
+                    },
+                    label = { Text("White2 (0-100)") },
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                // RGB каналы 1
+                Text("RGB канал 1", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
+
+                OutlinedTextField(
+                    value = red1Value,
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 255 } == true) {
+                            red1Value = filtered
+                        }
+                    },
+                    label = { Text("Red1 (0-255)") },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 OutlinedTextField(
-                    value = greenValue,
-                    onValueChange = { greenValue = it.filter { char -> char.isDigit() } },
-                    label = { Text("Green (0-255)") },
+                    value = green1Value,
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 255 } == true) {
+                            green1Value = filtered
+                        }
+                    },
+                    label = { Text("Green1 (0-255)") },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 OutlinedTextField(
-                    value = blueValue,
-                    onValueChange = { blueValue = it.filter { char -> char.isDigit() } },
-                    label = { Text("Blue (0-255)") },
+                    value = blue1Value,
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 255 } == true) {
+                            blue1Value = filtered
+                        }
+                    },
+                    label = { Text("Blue1 (0-255)") },
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                // RGB каналы 2
+                Text("RGB канал 2", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
+
+                OutlinedTextField(
+                    value = red2Value,
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 255 } == true) {
+                            red2Value = filtered
+                        }
+                    },
+                    label = { Text("Red2 (0-255)") },
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                OutlinedTextField(
+                    value = green2Value,
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 255 } == true) {
+                            green2Value = filtered
+                        }
+                    },
+                    label = { Text("Green2 (0-255)") },
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                OutlinedTextField(
+                    value = blue2Value,
+                    onValueChange = {
+                        val filtered = it.filter { char -> char.isDigit() }
+                        if (filtered.isEmpty() || filtered.toIntOrNull()?.let { it <= 255 } == true) {
+                            blue2Value = filtered
+                        }
+                    },
+                    label = { Text("Blue2 (0-255)") },
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                Text("Режим подсветки", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(bottom = 4.dp))
+
+                // Regime в самом конце
+                OutlinedTextField(
+                    value = regimeValue,
+                    onValueChange = { regimeValue = it.filter { char -> char.isDigit() } },
+                    label = { Text("Regime (0-10)") },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -497,30 +617,32 @@ fun CharacteristicItem(
                     onClick = { onReadCharacteristic(characteristic.uuid) },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Read")
+                    Text("READ")
                 }
             }
 
             if (characteristic.isWritable) {
                 Button(
                     onClick = {
-                        // Объединяем значения в строку через запятую
-                        val combinedValue = "$speedValue,$brightnessValue,$redValue,$greenValue,$blueValue"
+                        // Объединяем все 10 значений в строку через запятую
+                        val combinedValue = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
                         val bytes = combinedValue.toByteArray(Charsets.UTF_8)
                         onWriteCharacteristic(characteristic.uuid, bytes)
                     },
                     modifier = Modifier.weight(1f),
-                    enabled = speedValue.isNotBlank() && brightnessValue.isNotBlank() &&
-                            redValue.isNotBlank() && greenValue.isNotBlank() && blueValue.isNotBlank()
+                    enabled = speedValue.isNotBlank() && white1Value.isNotBlank() && white2Value.isNotBlank() &&
+                            red1Value.isNotBlank() && green1Value.isNotBlank() && blue1Value.isNotBlank() &&
+                            red2Value.isNotBlank() && green2Value.isNotBlank() && blue2Value.isNotBlank() &&
+                            regimeValue.isNotBlank()
                 ) {
-                    Text("Write")
+                    Text("WRITE")
                 }
             }
             if (characteristic.isWritable) {
                 Button(
                     onClick = {
-                        // Отправляем команду выключения: 0,0,0,0,0
-                        val offCommand = "0,0,0,0,0"
+                        // Отправляем команду выключения: 0,0,0,0,0,0,0,0,0,0 (10 нулей)
+                        val offCommand = "0,0,0,0,0,0,0,0,0,0"
                         val bytes = offCommand.toByteArray(Charsets.UTF_8)
                         onWriteCharacteristic(characteristic.uuid, bytes)
                     },
@@ -530,6 +652,160 @@ fun CharacteristicItem(
                     )
                 ) {
                     Text("OFF")
+                }
+            }
+        }
+
+        // Дополнительные кнопки ВЫНЕСТИ СЮДА, за пределы Row
+        if (characteristic.isWritable) {
+            // Speed кнопки
+            Text("Speed Control", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        val command = "0,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("SPEED_OFF")
+                }
+
+                Button(
+                    onClick = {
+                        val command = "1,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("SPEED_1")
+                }
+
+                Button(
+                    onClick = {
+                        val command = "2,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("SPEED_2")
+                }
+            }
+
+            // Color кнопки
+            Text("Color Presets", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        // Purple: RGB1 = (128,0,128), RGB2 = (128,0,128)
+                        val command = "$speedValue,$white1Value,$white2Value,128,0,128,128,0,128,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text("PURPLE")
+                }
+
+                Button(
+                    onClick = {
+                        // Blue: RGB1 = (0,0,255), RGB2 = (0,0,255)
+                        val command = "$speedValue,$white1Value,$white2Value,0,0,255,0,0,255,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text("BLUE")
+                }
+            }
+
+            // White кнопки
+            Text("White Control", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        val command = "$speedValue,0,0,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("WHITE_OFF")
+                }
+
+                Button(
+                    onClick = {
+                        val command = "$speedValue,50,50,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("WHITE_50%")
+                }
+
+                Button(
+                    onClick = {
+                        val command = "$speedValue,100,100,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("WHITE_100%")
+                }
+            }
+
+            // Regime кнопки
+            Text("Regime Control", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        val command = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,0"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("REGIME_OFF")
+                }
+
+                Button(
+                    onClick = {
+                        val command = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,1"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("REGIME_1")
+                }
+
+                Button(
+                    onClick = {
+                        val command = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,2"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("REGIME_2")
                 }
             }
         }

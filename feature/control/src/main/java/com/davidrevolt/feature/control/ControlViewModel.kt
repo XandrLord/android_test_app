@@ -90,7 +90,7 @@ class ControlViewModel @Inject constructor(
             try {
                 bluetoothLeService.readCharacteristic(characteristicUUID)
             } catch (e: Exception) {
-                _uiEvent.emit(UiEvent.ShowSnackbar("${e.message}"))
+                //_uiEvent.emit(UiEvent.ShowSnackbar("${e.message}"))
             }
         }
     }
@@ -99,11 +99,29 @@ class ControlViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 bluetoothLeService.writeCharacteristic(characteristicUUID, value)
-                // Автоматически читать после записи
-                delay(200) // Небольшая задержка для обработки записи устройством
-                bluetoothLeService.readCharacteristic(characteristicUUID)
+
+                // Первая попытка чтения через 200ms
+                delay(200)
+                try {
+                    bluetoothLeService.readCharacteristic(characteristicUUID)
+                } catch (e: Exception) {
+                    // Если первая попытка не удалась, пробуем через 5 секунд
+                    delay(5000)
+                    try {
+                        bluetoothLeService.readCharacteristic(characteristicUUID)
+                    } catch (e2: Exception) {
+                        // Если вторая попытка не удалась, пробуем через 5 секунд
+                        delay(2000)
+                        try {
+                            bluetoothLeService.readCharacteristic(characteristicUUID)
+                        } catch (e3: Exception) {
+                            _uiEvent.emit(UiEvent.ShowSnackbar("Write failed: ${e3.message}"))
+                        }
+                    }
+                }
             } catch (e: Exception) {
-                _uiEvent.emit(UiEvent.ShowSnackbar("${e.message}"))
+                // Показываем ошибку только если не удалась сама запись
+                _uiEvent.emit(UiEvent.ShowSnackbar("Write failed: ${e.message}"))
             }
         }
     }
