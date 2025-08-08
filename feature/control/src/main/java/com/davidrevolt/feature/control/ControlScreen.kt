@@ -599,7 +599,7 @@ fun CharacteristicItem(
                 OutlinedTextField(
                     value = regimeValue,
                     onValueChange = { regimeValue = it.filter { char -> char.isDigit() } },
-                    label = { Text("Regime (0-10)") },
+                    label = { Text("Regime (0-6)") },
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -608,6 +608,7 @@ fun CharacteristicItem(
         }
 
         // Кнопки Read, Write и OFF
+        Text("Управление устройством", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -638,6 +639,12 @@ fun CharacteristicItem(
                     Text("WRITE")
                 }
             }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             if (characteristic.isWritable) {
                 Button(
                     onClick = {
@@ -651,15 +658,14 @@ fun CharacteristicItem(
                         containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("OFF")
+                    Text("ВЫКЛ")
                 }
             }
         }
 
-        // Дополнительные кнопки ВЫНЕСТИ СЮДА, за пределы Row
         if (characteristic.isWritable) {
             // Speed кнопки
-            Text("Speed Control", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Text("Скорость вентиляторов", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -672,7 +678,7 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("SPEED_OFF")
+                    Text("СКОРОСТЬ 0")
                 }
 
                 Button(
@@ -683,9 +689,13 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("SPEED_1")
+                    Text("СКОРОСТЬ 1")
                 }
-
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Button(
                     onClick = {
                         val command = "2,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
@@ -694,12 +704,12 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("SPEED_2")
+                    Text("СКОРОСТЬ 2")
                 }
             }
 
             // Color кнопки
-            Text("Color Presets", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Text("Пресеты цветов", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -713,7 +723,7 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("PURPLE")
+                    Text("ФИОЛЕТОВЫЙ")
                 }
 
                 Button(
@@ -725,12 +735,84 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("BLUE")
+                    Text("СИНИЙ")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        // Красный: RGB1 = (255,0,0), RGB2 = (255,0,0)
+                        val command = "$speedValue,$white1Value,$white2Value,255,0,0,255,0,0,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("КРАСНЫЙ")
+                }
+
+                Button(
+                    onClick = {
+                        // Оранжевый: RGB1 = (255,165,0), RGB2 = (255,165,0)
+                        val command = "$speedValue,$white1Value,$white2Value,255,165,0,255,165,0,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("ОРАНЖЕВЫЙ")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        // Желтый: RGB1 = (255,255,0), RGB2 = (255,255,0)
+                        val command = "$speedValue,$white1Value,$white2Value,255,255,0,255,255,0,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("ЖЁЛТЫЙ")
+                }
+
+                Button(
+                    onClick = {
+                        // Зеленый: RGB1 = (0,255,0), RGB2 = (0,255,0)
+                        val command = "$speedValue,$white1Value,$white2Value,0,255,0,0,255,0,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("ЗЕЛЁНЫЙ")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        // Голубой: RGB1 = (0,255,255), RGB2 = (0,255,255)
+                        val command = "$speedValue,$white1Value,$white2Value,0,255,255,0,255,255,$regimeValue"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("ГОЛУБОЙ")
                 }
             }
 
             // White кнопки
-            Text("White Control", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Text("Управление белым", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -743,7 +825,7 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("WHITE_OFF")
+                    Text("БЕЛЫЙ ВЫКЛ")
                 }
 
                 Button(
@@ -754,9 +836,13 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("WHITE_50%")
+                    Text("БЕЛЫЙ 50%")
                 }
-
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Button(
                     onClick = {
                         val command = "$speedValue,100,100,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,$regimeValue"
@@ -765,12 +851,12 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("WHITE_100%")
+                    Text("БЕЛЫЙ 100%")
                 }
             }
 
             // Regime кнопки
-            Text("Regime Control", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Text("Управление режимами", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -783,7 +869,7 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("REGIME_OFF")
+                    Text("РЕЖИМ 0")
                 }
 
                 Button(
@@ -794,9 +880,13 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("REGIME_1")
+                    Text("РЕЖИМ 1")
                 }
-
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Button(
                     onClick = {
                         val command = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,2"
@@ -805,7 +895,59 @@ fun CharacteristicItem(
                     },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("REGIME_2")
+                    Text("РЕЖИМ 2")
+                }
+
+                Button(
+                    onClick = {
+                        val command = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,3"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("РЕЖИМ 3")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        val command = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,4"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("РЕЖИМ 4")
+                }
+
+                Button(
+                    onClick = {
+                        val command = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,5"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("РЕЖИМ 5")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = {
+                        val command = "$speedValue,$white1Value,$white2Value,$red1Value,$green1Value,$blue1Value,$red2Value,$green2Value,$blue2Value,6"
+                        val bytes = command.toByteArray(Charsets.UTF_8)
+                        onWriteCharacteristic(characteristic.uuid, bytes)
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("РЕЖИМ 6")
                 }
             }
         }
